@@ -1,7 +1,6 @@
 class RolesController < ApplicationController
   before_action :authenticate_user!
 
-
   def index
     @roles = Role.all
   end
@@ -26,5 +25,4 @@ class RolesController < ApplicationController
   def role_params
     params.require(:role).permit(:name)
   end
-
 end
