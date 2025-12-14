@@ -1,0 +1,39 @@
+<% provide(:title, "Sign In") %>
+<div class="min-h-screen w-full flex flex-col md:flex-row bg-gray-50 dark:bg-gray-900">
+  <!-- Left side image/logo (always visible, on top for mobile, left for desktop) -->
+  <div class="flex w-full md:w-1/2 items-center justify-center bg-gray-100 dark:bg-gray-600 min-h-[200px] md:min-h-screen py-8 md:py-0">
+    <div class="flex flex-col items-center w-full px-6">
+      <%#= image_tag 'icon.png', class: 'object-contain hidden dark:block mx-auto transition-all duration-300' %>
+      <%#= image_tag 'icon.png', class: 'object-contain block dark:hidden mx-auto transition-all duration-300' %>
+      <h4 class="text-base font-bold text-7xl text-center">Welcome to ClockIT</h4>
+    </div>
+  </div>
+  <!-- Right side form -->
+  <div class="w-full md:w-1/2 flex items-center justify-center bg-white dark:bg-gray-800 min-h-[400px] md:min-h-screen py-8 md:py-0">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), data: {turbo: false}, html: {class: 'w-full'}) do |f| %>
+      <div class="w-full max-w-sm sm:max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 sm:p-8">
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Sign in to Clock IT</h1>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        <div class="mb-4">
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Email</label>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "h-12 border border-gray-300 focus:border-blue-500 rounded-lg w-full px-3", required: true %>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">Password</label>
+          <%= f.password_field :password, autocomplete: "current-password", placeholder: '••••••••', class: "h-12 border border-gray-300 focus:border-blue-500 rounded-lg w-full px-3", required: true %>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
+          <div class="flex items-center">
+            <% if devise_mapping.rememberable? %>
+              <%= f.check_box :remember_me, class: "w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" %>
+              <label class="ml-2 text-sm text-gray-700 dark:text-gray-200"><%= f.label :remember_me %></label>
+            <% end %>
+          </div>
+          <div class="text-sm text-right w-full sm:w-auto">
+          </div>
+        </div>
+        <%= f.submit 'SUBMIT', class: 'h-12  border-2 hover:border-[#31adaf] hover:text-[#31adaf] p-3 rounded-lg font-bold w-full mb-4' %>
+      </div>
+    <% end %>
+  </div>
+</div>
