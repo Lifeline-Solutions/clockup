@@ -6,6 +6,21 @@ class ClockEvent < ApplicationRecord
   # Enum for event type
   enum :event_type, { clock_in: 'clock_in', clock_out: 'clock_out' }
 
+  # Derived predicates
+  def late?
+    return false unless clock_in?
+
+    org_start = organisation.work_start_time_for(occurred_at.to_date)
+    occurred_at > org_start
+  end
+
+  def early_leave?
+    return false unless clock_out?
+
+    org_end = organisation.work_end_time_for(occurred_at.to_date)
+    occurred_at < org_end
+  end
+
   # Validations
   validates :user, :organisation, :event_type, :occurred_at, presence: true
   validates :latitude, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }, allow_nil: true
