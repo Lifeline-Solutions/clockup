@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_25_071556) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_25_091713) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -40,6 +40,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_071556) do
     t.decimal "longitude", precision: 10, scale: 6
     t.string "name"
     t.datetime "updated_at", null: false
+    t.time "work_end_time", default: "2000-01-01 17:00:00", null: false
+    t.time "work_start_time", default: "2000-01-01 09:00:00", null: false
     t.index ["clock_qr_token"], name: "index_organisations_on_clock_qr_token", unique: true, where: "(clock_qr_token IS NOT NULL)"
   end
 
