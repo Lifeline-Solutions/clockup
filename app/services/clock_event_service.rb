@@ -5,10 +5,19 @@ class ClockEventService
   # user: User instance
   # organisation: Organisation instance
   # latitude, longitude: current user coordinates
-  # event_type: :clock_in or :clock_out
-  def self.call(user:, organisation:, latitude:, longitude:, event_type:)
-    # Prevent duplicate consecutive events
+  # event_type: optional, :clock_in or :clock_out
+  def self.call(user:, organisation:, latitude:, longitude:, event_type: nil)
+    # Determine last event in this organisation
     last_event = ClockEvent.where(user: user, organisation: organisation).order(occurred_at: :desc).first
+
+    # Decide event type if not passed
+    event_type ||= if last_event.nil? || last_event.clock_out?
+                     :clock_in
+                   else
+                     :clock_out
+                   end
+
+    # Prevent duplicate consecutive events
     raise DuplicateEventError, "Cannot create duplicate consecutive #{event_type} event" if last_event&.event_type == event_type.to_s
 
     # Calculate distance
