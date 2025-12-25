@@ -1,4 +1,6 @@
 class ClockEventsController < ApplicationController
+  before_action :authenticate_user!
+
   def create
     org = Organisation.find(params[:organisation_id])
     user = current_user
@@ -12,7 +14,7 @@ class ClockEventsController < ApplicationController
     end
 
     clock_event = ClockEventService.call(
-      user: user,
+      user: current_user,
       organisation: org,
       latitude: lat,
       longitude: lon,
