@@ -2,28 +2,30 @@ module Api
   module V1
     class ClockEventsController < BaseController
       def create
-        org = Organisation.find(params[:organisation_id])
-        lat = params[:latitude]
-        lon = params[:longitude]
-        type = params[:event_type]&.to_sym
+        organisation = Organisation.find_by!(clock_qr_token: params[:qr_token])
 
         clock_event = ClockEventService.call(
           user: current_user,
-          organisation: org,
-          latitude: lat,
-          longitude: lon,
-          event_type: type
+          organisation: organisation,
+          latitude: params[:latitude],
+          longitude: params[:longitude]
+          # event_type intentionally omitted → auto decision
         )
 
         render json: {
           message: "#{clock_event.event_type.humanize} successful",
+          event_type: clock_event.event_type,
           distance: clock_event.distance_from_org_meters,
           occurred_at: clock_event.occurred_at
         }, status: :created
-      rescue ClockEventService::OutsideGeofenceError, ClockEventService::DuplicateEventError => e
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Invalid QR code' }, status: :not_found
+      rescue ClockEventService::OutsideGeofenceError,
+             ClockEventService::DuplicateEventError => e
         render json: { error: e.message }, status: :unprocessable_entity
       rescue ActiveRecord::RecordInvalid => e
-        render json: { error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
+        render json: { error: e.record.errors.full_messages.join(', ') },
+               status: :unprocessable_entity
       end
     end
   end
