@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_25_093737) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_25_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -39,6 +39,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_093737) do
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
     t.string "name"
+    t.string "timezone", default: "UTC", null: false
     t.datetime "updated_at", null: false
     t.time "work_end_time", default: "2000-01-01 17:00:00", null: false
     t.time "work_start_time", default: "2000-01-01 09:00:00", null: false
