@@ -24,7 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_064604) do
     t.decimal "longitude", precision: 10, scale: 6
     t.string "name"
     t.datetime "updated_at", null: false
-    t.index ["clock_qr_token"], name: "index_organisations_on_clock_qr_token", unique: true
+    t.index ["clock_qr_token"], name: "index_organisations_on_clock_qr_token", unique: true, where: "(clock_qr_token IS NOT NULL)"
   end
 
   create_table "roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
