@@ -6,7 +6,7 @@ class AddClockinFieldsToOrganisations < ActiveRecord::Migration[8.1]
     add_column :organisations, :allowed_radius_meters, :integer, default: 100
     add_column :organisations, :clock_qr_token, :string
 
-    # Unique index ensures no two organisations have the same QR toke
-    add_index :organisations, :clock_qr_token, unique: true
+    # Unique index ensures no two organisations have the same QR token
+    add_index :organisations, :clock_qr_token, unique: true, where: "clock_qr_token IS NOT NULL"
   end
 end
