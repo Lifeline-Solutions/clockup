@@ -4,7 +4,7 @@ class ClockEvent < ApplicationRecord
   belongs_to :organisation
 
   # Enum for event type
-  enum event_type: { clock_in: 'clock_in', clock_out: 'clock_out' }
+  enum :event_type, { clock_in: 'clock_in', clock_out: 'clock_out' }
 
   # Validations
   validates :user, :organisation, :event_type, :occurred_at, presence: true

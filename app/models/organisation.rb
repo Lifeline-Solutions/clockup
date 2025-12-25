@@ -1,5 +1,8 @@
 class Organisation < ApplicationRecord
-  before_create :generate_clock_qr_token
+  # Ensure every organisation has a unique QR token before validation.
+  # This token is used for clock-in / clock-out operations and prevents
+  # nil values or database constraint violations during record creation.
+  before_validation :generate_clock_qr_token, on: :create
 
   # Associations
   has_many :users, dependent: :destroy
