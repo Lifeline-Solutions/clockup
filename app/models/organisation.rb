@@ -24,4 +24,12 @@ class Organisation < ApplicationRecord
   def generate_clock_qr_token
     self.clock_qr_token ||= SecureRandom.hex(10) # 20-character token
   end
+
+  def regenerate_clock_qr_token!
+    begin
+      self.clock_qr_token = SecureRandom.hex(10)
+    end while self.class.exists?(clock_qr_token: clock_qr_token)
+
+    save!
+  end
 end
