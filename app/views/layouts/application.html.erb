@@ -24,11 +24,12 @@
   </head>
 
   <body>
-    <main class="container flex">
-      <%= render "layouts/notice" %>
+    <main class="min-h-screen">
       <%= render "layouts/sidebar" %>
-
-      <%= yield %>
+      <div class="flex-1 sm:ml-64 p-4">
+        <%= render "layouts/notice" %>
+        <%= yield %>
+      </div>
     </main>
   </body>
 </html>

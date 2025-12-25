@@ -1,4 +1,5 @@
 class Organisation < ApplicationRecord
+  resourcify
   # Ensure every organisation has a unique QR token before validation.
   # This token is used for clock-in / clock-out operations and prevents
   # nil values or database constraint violations during record creation.
@@ -18,15 +19,22 @@ class Organisation < ApplicationRecord
                                     numericality: { only_integer: true, greater_than: 0, less_than_or_equal_to: 1000, message: 'must be a positive number less than or equal to 1000 meters' }
   validates :clock_qr_token, presence: true, uniqueness: true
   validates :work_start_time, :work_end_time, presence: true
+  validates :timezone, presence: true
+
+  def time_zone
+    ActiveSupport::TimeZone[timezone] || Time.zone
+  end
 
   # Returns a DateTime object for the organisation's start time on a given date
   def work_start_time_for(date)
-    DateTime.new(date.year, date.month, date.day, work_start_time.hour, work_start_time.min, work_start_time.sec, work_start_time.zone)
+    tz = time_zone
+    tz.parse(date.to_s).change(hour: work_start_time.hour, min: work_start_time.min, sec: work_start_time.sec)
   end
 
   # Returns a DateTime object for the organisation's end time on a given date
   def work_end_time_for(date)
-    DateTime.new(date.year, date.month, date.day, work_end_time.hour, work_end_time.min, work_end_time.sec, work_end_time.zone)
+    tz = time_zone
+    tz.parse(date.to_s).change(hour: work_end_time.hour, min: work_end_time.min, sec: work_end_time.sec)
   end
 
   private

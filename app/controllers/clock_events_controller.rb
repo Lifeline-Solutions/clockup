@@ -3,7 +3,17 @@ class ClockEventsController < ApplicationController
 
   def create
     org = Organisation.find(params[:organisation_id])
-    user = current_user
+    # Allow admins to clock for staff when user_id is provided
+    user = if params[:user_id].present?
+             if current_user.has_role?(:admin) || current_user.has_role?(:admin, org)
+               User.find(params[:user_id])
+             else
+               flash[:alert] = 'Not authorized to clock for this user'
+               return redirect_to organisation_path(org)
+             end
+           else
+             current_user
+           end
     lat = params[:latitude]
     lon = params[:longitude]
     type = params[:event_type]&.to_sym # :clock_in or :clock_out
@@ -13,8 +23,8 @@ class ClockEventsController < ApplicationController
       return redirect_to organisation_path(org)
     end
 
-    clock_event = ClockEventService.call(
-      user: current_user,
+    clock_event = ::ClockEventService.call(
+      user: user,
       organisation: org,
       latitude: lat,
       longitude: lon,
@@ -23,7 +33,7 @@ class ClockEventsController < ApplicationController
 
     flash[:notice] = "#{clock_event.event_type.humanize} successful"
     redirect_to organisation_path(org)
-  rescue ClockEventService::OutsideGeofenceError, ClockEventService::DuplicateEventError => e
+  rescue ::ClockEventService::OutsideGeofenceError, ::ClockEventService::DuplicateEventError => e
     flash[:alert] = e.message
     redirect_to organisation_path(org)
   rescue ActiveRecord::RecordInvalid => e
