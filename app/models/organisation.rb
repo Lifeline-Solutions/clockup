@@ -37,9 +37,10 @@ class Organisation < ApplicationRecord
   end
 
   def regenerate_clock_qr_token!
-    begin
+    loop do
       self.clock_qr_token = SecureRandom.hex(10)
-    end while self.class.exists?(clock_qr_token: clock_qr_token)
+      break unless self.class.exists?(clock_qr_token: clock_qr_token)
+    end
 
     save!
   end
