@@ -10,7 +10,7 @@ class OrganisationController < ApplicationController
         .where(organisation_id: org.id, user_id: user_ids)
         .select('DISTINCT ON (user_id) clock_events.*')
         .order('user_id, occurred_at DESC')
-      present_count = latest.count { |evt| evt.clock_in? }
+      present_count = latest.count(&:clock_in?)
       @presence_summary[org.id] = { users_count: org.users.size, present_count: present_count }
     end
   end

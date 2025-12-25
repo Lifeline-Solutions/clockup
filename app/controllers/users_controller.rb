@@ -17,7 +17,7 @@ class UsersController < ApplicationController
       .order(occurred_at: :desc)
       .limit(50)
 
-    @lateness_count = @recent_events.count { |e| e.late? }
-    @early_leave_count = @recent_events.count { |e| e.early_leave? }
+    @lateness_count = @recent_events.count(&:late?)
+    @early_leave_count = @recent_events.count(&:early_leave?)
   end
 end
