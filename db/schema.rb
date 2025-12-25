@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_25_064604) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_25_071556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "clock_events", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "distance_from_org_meters"
+    t.string "event_type", null: false
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.datetime "occurred_at", null: false
+    t.uuid "organisation_id", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.index ["organisation_id", "occurred_at"], name: "index_clock_events_on_organisation_id_and_occurred_at"
+    t.index ["organisation_id"], name: "index_clock_events_on_organisation_id"
+    t.index ["user_id", "occurred_at"], name: "index_clock_events_on_user_id_and_occurred_at"
+    t.index ["user_id"], name: "index_clock_events_on_user_id"
+  end
 
   create_table "organisations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "allowed_radius_meters", default: 100
@@ -79,5 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_064604) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "clock_events", "organisations"
+  add_foreign_key "clock_events", "users"
   add_foreign_key "users", "organisations"
 end

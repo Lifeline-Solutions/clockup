@@ -3,7 +3,7 @@ class Organisation < ApplicationRecord
 
   # Associations
   has_many :users, dependent: :destroy
-  # has_many :clock_events, dependent: :destroy
+  has_many :clock_events, dependent: :destroy
 
   # Validations
   validates :name, presence: true
