@@ -3,7 +3,9 @@ Rails.application.routes.draw do
 
   # Monolith routes
   root to: "home#index"
-  resources :organization
+  # Align routes with British spelling and existing controller
+  resources :organisations, controller: "organisation"
+  resources :users, only: [:show]
   resources :roles
   resources :clock_events, only: [:create]
 
