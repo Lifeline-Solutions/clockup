@@ -63,4 +63,19 @@ export default class extends Controller {
     }
     this.close()
   }
+
+  useCurrent() {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      if (!tz) return
+      // Try to find an item with this exact IANA value
+      const match = this.itemTargets.find((el) => el.dataset.value === tz)
+      this.hiddenTarget.value = tz
+      this.inputTarget.value = match ? match.textContent.trim() : tz
+      this.selected = tz
+      this.close()
+    } catch (e) {
+      console.warn("Timezone detection failed", e)
+    }
+  }
 }
