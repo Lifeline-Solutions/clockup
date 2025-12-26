@@ -25,6 +25,8 @@ class UsersController < ApplicationController
           @user.add_role(:admin, @organisation)
         end
       end
+      # Send invitation email (logged in development)
+      UserMailer.invite_user(@user, temp_password: temp_password).deliver_now
       notice = 'User created successfully.'
       notice += " Temporary password: #{temp_password}" if temp_password
       redirect_to organisation_path(@organisation), notice: notice

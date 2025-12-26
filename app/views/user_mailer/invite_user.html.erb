@@ -1,0 +1,12 @@
+<h2 style="margin:0 0 12px; font-size:18px;">Welcome to Clockup</h2>
+<p style="margin:0 0 8px;">Hello <%= @user.name %>,</p>
+<p style="margin:0 0 8px;">An account has been created for you at <strong><%= @organisation.name %></strong>.</p>
+<p style="margin:0 0 8px;">Your account email is: <code><%= @user.email %></code></p>
+<% if @temp_password.present? %>
+  <p style="margin:0 0 8px;">Your temporary password is: <code><%= @temp_password %></code></p>
+  <p style="margin:0 0 8px;">You'll be asked to change it after you sign in.</p>
+<% else %>
+  <p style="margin:0 0 8px;">Use the password provided by your administrator to sign in.</p>
+<% end %>
+<p style="margin:0 0 12px;">Sign in here: <a href="<%= new_user_session_url %>">Sign in</a></p>
+<p style="margin:0 0 8px; color:#666; font-size:12px;">If you didn't expect this email, you can ignore it.</p>
