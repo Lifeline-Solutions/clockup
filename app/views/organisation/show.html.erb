@@ -1,7 +1,12 @@
 <div class="space-y-8">
   <!-- Organisation Summary -->
   <section class="bg-white shadow-sm rounded-lg p-6">
-    <h1 class="text-xl font-semibold text-gray-800"><%= @organisation.name %></h1>
+    <div class="flex items-center justify-between">
+      <h1 class="text-xl font-semibold text-gray-800"><%= @organisation.name %></h1>
+      <% if current_user.has_role?(:admin) || current_user.has_role?(:admin, @organisation) %>
+        <%= link_to "Edit", edit_organisation_path(@organisation), class: "inline-flex items-center px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+      <% end %>
+    </div>
     <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-700">
       <div class="border rounded-md p-3">
         <div class="font-medium text-gray-900">Location</div>

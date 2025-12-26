@@ -1,4 +1,7 @@
 class OrganisationController < ApplicationController
+  before_action :set_organisation, only: %i[show edit update]
+  before_action :require_admin!, only: %i[edit update]
+
   def index
     @organisations = Organisation.includes(:users)
 
@@ -16,7 +19,7 @@ class OrganisationController < ApplicationController
   end
 
   def show
-    @organisation = Organisation.includes(:users).find(params[:id])
+    # @organisation is set via before_action
 
     user_ids = @organisation.users.select(:id)
 
@@ -33,5 +36,36 @@ class OrganisationController < ApplicationController
       .where(organisation_id: @organisation.id, occurred_at: today_range)
       .includes(:user)
       .order(:occurred_at)
+  end
+
+  def edit
+    # @organisation is set via before_action
+  end
+
+  def update
+    # Only allow updating working hours for now
+    if @organisation.update(organisation_params)
+      redirect_to organisation_path(@organisation), notice: 'Organisation working hours updated successfully.'
+    else
+      flash.now[:alert] = @organisation.errors.full_messages.to_sentence
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_organisation
+    @organisation = Organisation.find(params[:id])
+  end
+
+  def require_admin!
+    allowed = current_user&.has_role?(:admin) || current_user&.has_role?(:admin, @organisation)
+    return if allowed
+
+    redirect_to organisation_path(@organisation), alert: 'You are not authorized to edit this organisation.'
+  end
+
+  def organisation_params
+    params.require(:organisation).permit(:work_start_time, :work_end_time)
   end
 end

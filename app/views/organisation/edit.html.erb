@@ -1,0 +1,25 @@
+<div class="max-w-xl mx-auto bg-white shadow-sm rounded-lg p-6">
+  <h1 class="text-xl font-semibold text-gray-800">Edit Working Hours</h1>
+  <p class="mt-1 text-sm text-gray-600">Update the organisation's start and end times.</p>
+
+  <%= form_with(model: @organisation, url: organisation_path(@organisation), method: :patch, local: true) do |f| %>
+    <div class="mt-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="organisation_work_start_time">Start Time</label>
+        <%= f.time_field :work_start_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", step: 60 %>
+        <p class="mt-1 text-xs text-gray-500">Use 24-hour format (HH:MM).</p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="organisation_work_end_time">End Time</label>
+        <%= f.time_field :work_end_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", step: 60 %>
+        <p class="mt-1 text-xs text-gray-500">Use 24-hour format (HH:MM).</p>
+      </div>
+
+      <div class="flex items-center gap-2 mt-6">
+        <%= f.submit "Save", class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700" %>
+        <%= link_to "Cancel", organisation_path(@organisation), class: "text-sm text-gray-600 hover:text-gray-800" %>
+      </div>
+    </div>
+  <% end %>
+</div>
