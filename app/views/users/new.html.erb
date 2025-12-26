@@ -1,0 +1,49 @@
+<div class="max-w-xl mx-auto bg-white shadow-sm rounded-lg p-6">
+  <h1 class="text-xl font-semibold text-gray-800">Create User</h1>
+  <p class="mt-1 text-sm text-gray-600">Add a user to <span class="font-medium"><%= @organisation.name %></span> and set their role.</p>
+
+  <%= form_with(model: @user, url: organisation_users_path(@organisation), method: :post, local: true) do |f| %>
+    <%= f.hidden_field :organisation_id, value: @organisation.id %>
+
+    <div class="mt-4 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="user_email">Email</label>
+        <%= f.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="user_password">Password</label>
+        <%= f.password_field :password, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="user_first_name">First name</label>
+          <%= f.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="user_last_name">Last name</label>
+          <%= f.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="user_role">Role</label>
+        <%= f.select :role,
+          options_for_select([
+            ["None", ""],
+            ["Admin (this organisation)", "admin_org"],
+            ["Admin (global)", "admin_global"]
+          ]),
+          {},
+          class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <p class="mt-1 text-xs text-gray-500">Choose 'Admin (this organisation)' to limit privileges to <%= @organisation.name %>.</p>
+      </div>
+
+      <div class="flex items-center gap-2 mt-6">
+        <%= f.submit "Create", class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700" %>
+        <%= link_to "Cancel", organisation_path(@organisation), class: "text-sm text-gray-600 hover:text-gray-800" %>
+      </div>
+    </div>
+  <% end %>
+</div>

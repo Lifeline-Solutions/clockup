@@ -32,6 +32,14 @@
           <span class="inline-flex items-center px-2 py-1 rounded bg-green-100 text-green-800"><%= present_count %></span>
         </div>
       </div>
+      <% if current_user.has_role?(:admin) || current_user.has_role?(:admin, @organisation) %>
+        <div class="border rounded-md p-3">
+          <div class="font-medium text-gray-900">Manage Users</div>
+          <div class="mt-2">
+            <%= link_to "Create User", new_organisation_user_path(@organisation), class: "inline-flex items-center px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </section>
 
