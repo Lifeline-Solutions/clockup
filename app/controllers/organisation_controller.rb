@@ -1,6 +1,6 @@
 class OrganisationController < ApplicationController
   before_action :set_organisation, only: %i[show edit update]
-  before_action :require_admin!, only: %i[edit update]
+  before_action :require_admin!, only: %i[new create edit update]
 
   def index
     @organisations = Organisation.includes(:users)
@@ -38,6 +38,20 @@ class OrganisationController < ApplicationController
       .order(:occurred_at)
   end
 
+  def new
+    @organisation = Organisation.new
+  end
+
+  def create
+    @organisation = Organisation.new(organisation_create_params)
+    if @organisation.save
+      redirect_to organisation_path(@organisation), notice: 'Organisation created successfully.'
+    else
+      flash.now[:alert] = @organisation.errors.full_messages.to_sentence
+      render :new, status: :unprocessable_entity
+    end
+  end
+
   def edit
     # @organisation is set via before_action
   end
@@ -67,5 +81,18 @@ class OrganisationController < ApplicationController
 
   def organisation_params
     params.require(:organisation).permit(:work_start_time, :work_end_time)
+  end
+
+  def organisation_create_params
+    params.require(:organisation).permit(
+      :name,
+      :email,
+      :latitude,
+      :longitude,
+      :allowed_radius_meters,
+      :timezone,
+      :work_start_time,
+      :work_end_time
+    )
   end
 end
