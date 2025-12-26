@@ -8,12 +8,12 @@
     <div class="mt-4 space-y-4">
       <div>
         <label class="block text-sm font-medium text-gray-700" for="user_email">Email</label>
-        <%= f.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <%= f.email_field :email, autocomplete: "off", value: "", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
       </div>
 
       <div>
         <label class="block text-sm font-medium text-gray-700" for="user_password">Password</label>
-        <%= f.password_field :password, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        <%= f.password_field :password, autocomplete: "new-password", placeholder: "Leave blank to auto-generate", class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

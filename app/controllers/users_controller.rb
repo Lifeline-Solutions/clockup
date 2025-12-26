@@ -10,6 +10,11 @@ class UsersController < ApplicationController
   def create
     @organisation = Organisation.find(user_create_params[:organisation_id])
     @user = User.new(user_create_params.except(:role))
+    temp_password = nil
+    if @user.password.blank?
+      temp_password = SecureRandom.urlsafe_base64(12)
+      @user.password = temp_password
+    end
     if @user.save
       role = params.dig(:user, :role)
       if role.present?
@@ -20,7 +25,9 @@ class UsersController < ApplicationController
           @user.add_role(:admin, @organisation)
         end
       end
-      redirect_to organisation_path(@organisation), notice: 'User created successfully.'
+      notice = 'User created successfully.'
+      notice += " Temporary password: #{temp_password}" if temp_password
+      redirect_to organisation_path(@organisation), notice: notice
     else
       flash.now[:alert] = @user.errors.full_messages.to_sentence
       render :new, status: :unprocessable_entity
