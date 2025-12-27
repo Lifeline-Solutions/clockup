@@ -34,9 +34,11 @@ class OrganisationController < ApplicationController
     # Determine filter range
     period = params[:period].presence || 'today'
     now = Time.zone.now
+    default_range = now.beginning_of_day..now.end_of_day
+    m = params[:month].to_i
+    y = params[:year].to_i
+    valid_month = m.between?(1, 12) && y.positive?
     range = case period
-            when 'today'
-              now.beginning_of_day..now.end_of_day
             when 'yesterday'
               (now - 1.day).beginning_of_day..(now - 1.day).end_of_day
             when 'this_week'
@@ -47,37 +49,48 @@ class OrganisationController < ApplicationController
               last_month = now.last_month
               last_month.beginning_of_month..last_month.end_of_month
             when 'month'
-              m = params[:month].to_i
-              y = params[:year].to_i
-              if m.between?(1, 12) && y.positive?
+              if valid_month
                 start = Time.zone.local(y, m, 1).beginning_of_day
                 finish = start.end_of_month.end_of_day
                 start..finish
-              else
-                now.beginning_of_day..now.end_of_day
               end
             else
-              now.beginning_of_day..now.end_of_day
+              default_range
             end
+    range ||= default_range
 
     @period_label = case period
-                    when 'today' then 'Today'
                     when 'yesterday' then 'Yesterday'
                     when 'this_week' then 'This Week'
                     when 'last_week' then 'Last Week'
                     when 'last_month' then 'Last Month'
-                    when 'month'
-                      m = params[:month].to_i
-                      y = params[:year].to_i
-                      m.between?(1, 12) && y.positive? ? Date::MONTHNAMES[m] + " #{y}" : 'Selected Month'
-                    else
-                      'Today'
+                    when 'month' then (valid_month ? Date::MONTHNAMES[m] + " #{y}" : 'Selected Month')
+                    else 'Today'
                     end
 
-    @events = ClockEvent
+    # Build events scope
+    events_scope = ClockEvent
       .where(organisation_id: @organisation.id, occurred_at: range)
       .includes(:user)
       .order(:occurred_at)
+
+    # Pagination
+    @per_page = 5
+    @page = params[:page].to_i
+    @page = 1 if @page < 1
+    @total_count = ClockEvent.where(organisation_id: @organisation.id, occurred_at: range).count
+    @total_pages = (@total_count / @per_page.to_f).ceil
+    @page = if @total_pages.zero?
+              1
+            else
+              [[@page, 1].max, @total_pages].min
+            end
+    @start_count = @total_count.zero? ? 0 : ((@page - 1) * @per_page) + 1
+    @end_count = [@page * @per_page, @total_count].min
+
+    @events = events_scope
+      .offset((@page - 1) * @per_page)
+      .limit(@per_page)
   end
 
   def new

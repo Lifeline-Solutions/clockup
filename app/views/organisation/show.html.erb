@@ -132,7 +132,7 @@
   <!-- Clock Events (Filterable) -->
   <section class="bg-white shadow-sm rounded-lg p-6">
     <div class="flex items-center justify-between">
-      <h2 class="text-lg font-semibold text-gray-800">Clock Events — <%= @period_label %></h2>
+      <h2 class="text-lg font-semibold text-gray-800">Clock Events - <%= @period_label %></h2>
       <%= form_with url: organisation_path(@organisation), method: :get, local: true, class: "flex items-center gap-2" do %>
         <label class="text-sm text-gray-600">Period</label>
         <%= select_tag :period,
@@ -190,6 +190,29 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+    <div class="mt-4 flex items-center justify-between text-sm text-gray-700">
+      <div>
+        Showing <%= @start_count %>–<%= @end_count %> of <%= @total_count %>
+      </div>
+      <div class="flex items-center gap-2">
+        <% prev_disabled = (@page <= 1) || (@total_pages == 0) %>
+        <% next_disabled = (@total_pages == 0) || (@page >= @total_pages) %>
+        <% if prev_disabled %>
+          <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
+        <% else %>
+          <%= link_to "Back",
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page - 1),
+                      class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+        <% if next_disabled %>
+          <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
+        <% else %>
+          <%= link_to "Next",
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page + 1),
+                      class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+      </div>
     </div>
   </section>
 </div>
