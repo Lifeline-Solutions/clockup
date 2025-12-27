@@ -40,4 +40,18 @@ class User < ApplicationRecord
       break token unless self.class.exists?(api_token: token)
     end
   end
+
+  public
+
+  def regenerate_api_token!
+    self.api_token = loop do
+      token = SecureRandom.hex(20)
+      break token unless self.class.exists?(api_token: token)
+    end
+    save!
+  end
+
+  def clear_api_token!
+    update!(api_token: nil)
+  end
 end

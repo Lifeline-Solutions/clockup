@@ -17,6 +17,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post "login", to: "sessions#login"
+      post "logout", to: "sessions#logout"
       post "clock", to: "clock_events#create"
     end
   end
