@@ -129,9 +129,31 @@
     </div>
   </section>
 
-  <!-- Today's Clock Events -->
+  <!-- Clock Events (Filterable) -->
   <section class="bg-white shadow-sm rounded-lg p-6">
-    <h2 class="text-lg font-semibold text-gray-800">Today's Clock Events</h2>
+    <div class="flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-gray-800">Clock Events — <%= @period_label %></h2>
+      <%= form_with url: organisation_path(@organisation), method: :get, local: true, class: "flex items-center gap-2" do %>
+        <label class="text-sm text-gray-600">Period</label>
+        <%= select_tag :period,
+                       options_for_select([
+                         ['Today', 'today'],
+                         ['Yesterday', 'yesterday'],
+                         ['This Week', 'this_week'],
+                         ['Last Week', 'last_week'],
+                         ['Last Month', 'last_month'],
+                         ['Select Month…', 'month']
+                       ], params[:period].presence || 'today'),
+                       class: "px-2 py-1 border rounded text-sm" %>
+        <label class="text-sm text-gray-600">Month</label>
+        <%= select_tag :month,
+                       options_for_select((1..12).map { |m| [Date::MONTHNAMES[m], m] }, params[:month]),
+                       class: "px-2 py-1 border rounded text-sm" %>
+        <label class="text-sm text-gray-600">Year</label>
+        <%= number_field_tag :year, params[:year], min: 2000, max: 2100, class: "px-2 py-1 border rounded text-sm w-24" %>
+        <%= submit_tag 'Apply', class: "px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+      <% end %>
+    </div>
     <div class="mt-4 overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -144,7 +166,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <% @todays_events.each do |evt| %>
+          <% @events.each do |evt| %>
             <tr>
               <td class="px-4 py-2 whitespace-nowrap"><%= evt.user.name.presence || evt.user.email %></td>
               <td class="px-4 py-2 whitespace-nowrap"><%= evt.event_type.humanize %></td>

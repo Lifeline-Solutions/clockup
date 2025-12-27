@@ -31,9 +31,51 @@ class OrganisationController < ApplicationController
       .includes(:user)
       .index_by(&:user_id)
 
-    today_range = Time.zone.now.beginning_of_day..Time.zone.now.end_of_day
-    @todays_events = ClockEvent
-      .where(organisation_id: @organisation.id, occurred_at: today_range)
+    # Determine filter range
+    period = params[:period].presence || 'today'
+    now = Time.zone.now
+    range = case period
+            when 'today'
+              now.beginning_of_day..now.end_of_day
+            when 'yesterday'
+              (now - 1.day).beginning_of_day..(now - 1.day).end_of_day
+            when 'this_week'
+              now.beginning_of_week..now.end_of_week
+            when 'last_week'
+              (now - 1.week).beginning_of_week..(now - 1.week).end_of_week
+            when 'last_month'
+              last_month = now.last_month
+              last_month.beginning_of_month..last_month.end_of_month
+            when 'month'
+              m = params[:month].to_i
+              y = params[:year].to_i
+              if m.between?(1, 12) && y.positive?
+                start = Time.zone.local(y, m, 1).beginning_of_day
+                finish = start.end_of_month.end_of_day
+                start..finish
+              else
+                now.beginning_of_day..now.end_of_day
+              end
+            else
+              now.beginning_of_day..now.end_of_day
+            end
+
+    @period_label = case period
+                    when 'today' then 'Today'
+                    when 'yesterday' then 'Yesterday'
+                    when 'this_week' then 'This Week'
+                    when 'last_week' then 'Last Week'
+                    when 'last_month' then 'Last Month'
+                    when 'month'
+                      m = params[:month].to_i
+                      y = params[:year].to_i
+                      m.between?(1, 12) && y.positive? ? Date::MONTHNAMES[m] + " #{y}" : 'Selected Month'
+                    else
+                      'Today'
+                    end
+
+    @events = ClockEvent
+      .where(organisation_id: @organisation.id, occurred_at: range)
       .includes(:user)
       .order(:occurred_at)
   end
