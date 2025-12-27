@@ -47,6 +47,18 @@
   <section class="bg-white shadow-sm rounded-lg p-6">
     <div class="flex items-center justify-between">
       <h2 class="text-lg font-semibold text-gray-800">Users</h2>
+      <%= form_with url: organisation_path(@organisation), method: :get, local: true, class: "flex items-center gap-2" do %>
+        <%= hidden_field_tag :period, params[:period] %>
+        <%= hidden_field_tag :month, params[:month] %>
+        <%= hidden_field_tag :year, params[:year] %>
+        <%= hidden_field_tag :page, params[:page] %>
+        <%= hidden_field_tag :events_q, params[:events_q] %>
+        <input type="text" name="users_q" value="<%= params[:users_q] %>" placeholder="Search users by name or email" class="px-2 py-1 text-sm border rounded w-64" />
+        <%= submit_tag 'Search', class: "px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+        <% if params[:users_q].present? %>
+          <%= link_to 'Clear', organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: 1), class: "px-3 py-1 text-sm rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+      <% end %>
     </div>
     <div class="mt-4 overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
@@ -138,14 +150,14 @@
           <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
         <% else %>
           <%= link_to "Back",
-                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page - 1),
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page - 1, users_q: params[:users_q], events_q: params[:events_q]),
                       class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
         <% end %>
         <% if next_disabled_users %>
           <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
         <% else %>
           <%= link_to "Next",
-                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page + 1),
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page + 1, users_q: params[:users_q], events_q: params[:events_q]),
                       class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
         <% end %>
       </div>
@@ -157,6 +169,8 @@
     <div class="flex items-center justify-between">
       <h2 class="text-lg font-semibold text-gray-800">Clock Events - <%= @period_label %></h2>
       <%= form_with url: organisation_path(@organisation), method: :get, local: true, class: "flex items-center gap-2" do %>
+        <%= hidden_field_tag :users_page, params[:users_page] %>
+        <%= hidden_field_tag :users_q, params[:users_q] %>
         <label class="text-sm text-gray-600">Period</label>
         <%= select_tag :period,
                        options_for_select([
@@ -174,6 +188,7 @@
                        class: "px-2 py-1 border rounded text-sm" %>
         <label class="text-sm text-gray-600">Year</label>
         <%= number_field_tag :year, params[:year], min: 2000, max: 2100, class: "px-2 py-1 border rounded text-sm w-24" %>
+        <input type="text" name="events_q" value="<%= params[:events_q] %>" placeholder="Filter events by user/email" class="px-2 py-1 text-sm border rounded w-64" />
         <%= submit_tag 'Apply', class: "px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
       <% end %>
     </div>
@@ -225,14 +240,14 @@
           <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
         <% else %>
           <%= link_to "Back",
-                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page - 1),
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page - 1, events_q: params[:events_q], users_page: params[:users_page], users_q: params[:users_q]),
                       class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
         <% end %>
         <% if next_disabled %>
           <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
         <% else %>
           <%= link_to "Next",
-                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page + 1),
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: @page + 1, events_q: params[:events_q], users_page: params[:users_page], users_q: params[:users_q]),
                       class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
         <% end %>
       </div>

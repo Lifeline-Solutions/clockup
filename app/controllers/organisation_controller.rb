@@ -53,11 +53,20 @@ class OrganisationController < ApplicationController
       .includes(:user)
       .index_by(&:user_id)
 
-    # Users in organisation pagination (separate from events pagination)
-    @users_per_page = 10
+    # Users filter + pagination (separate from events pagination)
+    users_scope = @organisation.users.order(:id)
+    users_q = params[:users_q].to_s.strip
+    if users_q.present?
+      users_scope = users_scope.where(
+        'users.first_name ILIKE :q OR users.last_name ILIKE :q OR users.email ILIKE :q',
+        q: "%#{users_q}%"
+      )
+    end
+
+    @users_per_page = 20
     @users_page = (params[:users_page] || 1).to_i
     @users_page = 1 if @users_page < 1
-    @users_total_count = @organisation.users.count
+    @users_total_count = users_scope.count
     @users_total_pages = (@users_total_count / @users_per_page.to_f).ceil
     @users_page = if @users_total_pages.zero?
                     1
@@ -67,8 +76,7 @@ class OrganisationController < ApplicationController
     @users_start_count = @users_total_count.zero? ? 0 : ((@users_page - 1) * @users_per_page) + 1
     @users_end_count = [@users_page * @users_per_page, @users_total_count].min
 
-    @users = @organisation.users
-      .order(:id)
+    @users = users_scope
       .offset((@users_page - 1) * @users_per_page)
       .limit(@users_per_page)
 
@@ -109,17 +117,25 @@ class OrganisationController < ApplicationController
                     else 'Today'
                     end
 
-    # Build events scope
+    # Build events scope + search filter
     events_scope = ClockEvent
       .where(organisation_id: @organisation.id, occurred_at: range)
+      .joins(:user)
       .includes(:user)
       .order(:occurred_at)
+    events_q = params[:events_q].to_s.strip
+    if events_q.present?
+      events_scope = events_scope.where(
+        'users.first_name ILIKE :q OR users.last_name ILIKE :q OR users.email ILIKE :q',
+        q: "%#{events_q}%"
+      )
+    end
 
     # Pagination
-    @per_page = 15
+    @per_page = 20
     @page = params[:page].to_i
     @page = 1 if @page < 1
-    @total_count = ClockEvent.where(organisation_id: @organisation.id, occurred_at: range).count
+    @total_count = events_scope.count
     @total_pages = (@total_count / @per_page.to_f).ceil
     @page = if @total_pages.zero?
               1
