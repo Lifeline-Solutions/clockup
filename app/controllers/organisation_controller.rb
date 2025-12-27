@@ -49,6 +49,25 @@ class OrganisationController < ApplicationController
       .includes(:user)
       .index_by(&:user_id)
 
+    # Users in organisation pagination (separate from events pagination)
+    @users_per_page = 10
+    @users_page = (params[:users_page] || 1).to_i
+    @users_page = 1 if @users_page < 1
+    @users_total_count = @organisation.users.count
+    @users_total_pages = (@users_total_count / @users_per_page.to_f).ceil
+    @users_page = if @users_total_pages.zero?
+                    1
+                  else
+                    [[@users_page, 1].max, @users_total_pages].min
+                  end
+    @users_start_count = @users_total_count.zero? ? 0 : ((@users_page - 1) * @users_per_page) + 1
+    @users_end_count = [@users_page * @users_per_page, @users_total_count].min
+
+    @users = @organisation.users
+      .order(:id)
+      .offset((@users_page - 1) * @users_per_page)
+      .limit(@users_per_page)
+
     # Determine filter range
     period = params[:period].presence || 'today'
     now = Time.zone.now

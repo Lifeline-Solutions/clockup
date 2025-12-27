@@ -62,7 +62,7 @@
           </tr>
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
-          <% @organisation.users.each do |user| %>
+          <% @users.each do |user| %>
             <% evt = @latest_events[user.id] %>
             <tr>
               <td class="px-4 py-2 whitespace-nowrap"><%= user.name.presence || user.email %></td>
@@ -126,6 +126,29 @@
           <% end %>
         </tbody>
       </table>
+    </div>
+    <div class="mt-4 flex items-center justify-between text-sm text-gray-700">
+      <div>
+        Showing <%= @users_start_count %>–<%= @users_end_count %> of <%= @users_total_count %>
+      </div>
+      <div class="flex items-center gap-2">
+        <% prev_disabled_users = (@users_page <= 1) || (@users_total_pages == 0) %>
+        <% next_disabled_users = (@users_total_pages == 0) || (@users_page >= @users_total_pages) %>
+        <% if prev_disabled_users %>
+          <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
+        <% else %>
+          <%= link_to "Back",
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page - 1),
+                      class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+        <% if next_disabled_users %>
+          <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
+        <% else %>
+          <%= link_to "Next",
+                      organisation_path(@organisation, period: params[:period], month: params[:month], year: params[:year], page: params[:page], users_page: @users_page + 1),
+                      class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+      </div>
     </div>
   </section>
 
