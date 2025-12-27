@@ -4,6 +4,8 @@ module Api
       def create
         organisation = Organisation.find_by!(clock_qr_token: params[:qr_token])
 
+        return render json: { error: 'Organisation is deactivated' }, status: :forbidden unless organisation.active?
+
         clock_event = ClockEventService.call(
           user: current_user,
           organisation: organisation,
@@ -16,7 +18,9 @@ module Api
           message: "#{clock_event.event_type.humanize} successful",
           event_type: clock_event.event_type,
           distance: clock_event.distance_from_org_meters,
-          occurred_at: clock_event.occurred_at
+          occurred_at: clock_event.occurred_at,
+          late: (clock_event.respond_to?(:late?) ? clock_event.late? : false),
+          early_leave: (clock_event.respond_to?(:early_leave?) ? clock_event.early_leave? : false)
         }, status: :created
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Invalid QR code' }, status: :not_found
