@@ -5,6 +5,10 @@ class OrganisationController < ApplicationController
   def index
     base_scope = Organisation.includes(:users)
 
+    # Search filter
+    q = params[:q].to_s.strip
+    base_scope = base_scope.where('organisations.name ILIKE :q OR organisations.email ILIKE :q', q: "%#{q}%") if q.present?
+
     # Pagination
     @per_page = 20
     @page = (params[:page] || 1).to_i

@@ -1,9 +1,18 @@
 <div class="space-y-6">
   <div class="flex items-center justify-between">
     <h1 class="text-xl font-semibold text-gray-800">Organisations</h1>
-    <% if current_user.has_role?(:admin) %>
-      <%= link_to "New Organisation", new_organisation_path, class: "inline-flex items-center px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
-    <% end %>
+    <div class="flex items-center gap-3">
+      <%= form_with url: organisations_path, method: :get, local: true, class: "flex items-center gap-2" do %>
+        <input type="text" name="q" value="<%= params[:q] %>" placeholder="Search by name or email" class="px-2 py-1 text-sm border rounded w-64" />
+        <%= submit_tag 'Search', class: "px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+        <% if params[:q].present? %>
+          <%= link_to 'Clear', organisations_path, class: "px-3 py-1 text-sm rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <% end %>
+      <% end %>
+      <% if current_user.has_role?(:admin) %>
+        <%= link_to "New Organisation", new_organisation_path, class: "inline-flex items-center px-3 py-1 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700" %>
+      <% end %>
+    </div>
   </div>
   <div class="bg-white shadow-sm rounded-lg">
     <table class="min-w-full divide-y divide-gray-200">
@@ -46,12 +55,12 @@
       <% if prev_disabled %>
         <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
       <% else %>
-        <%= link_to "Back", organisations_path(page: @page - 1), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <%= link_to "Back", organisations_path(page: @page - 1, q: params[:q]), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
       <% end %>
       <% if next_disabled %>
         <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
       <% else %>
-        <%= link_to "Next", organisations_path(page: @page + 1), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+        <%= link_to "Next", organisations_path(page: @page + 1, q: params[:q]), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
       <% end %>
     </div>
   </div>
