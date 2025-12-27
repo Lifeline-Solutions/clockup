@@ -3,9 +3,27 @@ class OrganisationController < ApplicationController
   before_action :require_admin!, only: %i[new create edit update]
 
   def index
-    @organisations = Organisation.includes(:users)
+    base_scope = Organisation.includes(:users)
 
-    # Build presence summaries per organisation
+    # Pagination
+    @per_page = 20
+    @page = (params[:page] || 1).to_i
+    @page = 1 if @page < 1
+    @total_count = base_scope.count
+    @total_pages = (@total_count / @per_page.to_f).ceil
+    @page = if @total_pages.zero?
+              1
+            else
+              [[@page, 1].max, @total_pages].min
+            end
+    @start_count = @total_count.zero? ? 0 : ((@page - 1) * @per_page) + 1
+    @end_count = [@page * @per_page, @total_count].min
+
+    @organisations = base_scope
+      .offset((@page - 1) * @per_page)
+      .limit(@per_page)
+
+    # Build presence summaries per displayed organisation
     @presence_summary = {}
     @organisations.each do |org|
       user_ids = org.users.select(:id)
@@ -75,7 +93,7 @@ class OrganisationController < ApplicationController
       .order(:occurred_at)
 
     # Pagination
-    @per_page = 5
+    @per_page = 15
     @page = params[:page].to_i
     @page = 1 if @page < 1
     @total_count = ClockEvent.where(organisation_id: @organisation.id, occurred_at: range).count

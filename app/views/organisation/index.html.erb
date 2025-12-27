@@ -36,4 +36,23 @@
       </tbody>
     </table>
   </div>
+  <div class="flex items-center justify-between text-sm text-gray-700">
+    <div>
+      Showing <%= @start_count %>–<%= @end_count %> of <%= @total_count %>
+    </div>
+    <div class="flex items-center gap-2">
+      <% prev_disabled = (@page <= 1) || (@total_pages == 0) %>
+      <% next_disabled = (@total_pages == 0) || (@page >= @total_pages) %>
+      <% if prev_disabled %>
+        <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Back</span>
+      <% else %>
+        <%= link_to "Back", organisations_path(page: @page - 1), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+      <% end %>
+      <% if next_disabled %>
+        <span class="px-3 py-1 rounded border bg-gray-100 text-gray-400 cursor-not-allowed">Next</span>
+      <% else %>
+        <%= link_to "Next", organisations_path(page: @page + 1), class: "px-3 py-1 rounded border bg-white text-gray-700 hover:bg-gray-50" %>
+      <% end %>
+    </div>
+  </div>
 </div>
