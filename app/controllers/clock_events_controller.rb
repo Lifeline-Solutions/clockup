@@ -3,6 +3,10 @@ class ClockEventsController < ApplicationController
 
   def create
     org = Organisation.find(params[:organisation_id])
+    unless org.active?
+      flash[:alert] = 'Organisation is deactivated. Actions are disabled.'
+      return redirect_to organisations_path
+    end
     # Allow admins to clock for staff when user_id is provided
     user = if params[:user_id].present?
              if current_user.has_role?(:admin) || current_user.has_role?(:admin, org)

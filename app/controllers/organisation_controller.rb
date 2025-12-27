@@ -169,8 +169,19 @@ class OrganisationController < ApplicationController
   end
 
   def update
+    prev_active = @organisation.active?
     if @organisation.update(organisation_params)
-      redirect_to organisation_path(@organisation), notice: 'Organisation updated successfully.'
+      if @organisation.saved_change_to_active?
+        if !@organisation.active?
+          redirect_to organisations_path, notice: 'Organisation deactivated.'
+        elsif !prev_active && @organisation.active?
+          redirect_to organisation_path(@organisation), notice: 'Organisation reactivated.'
+        else
+          redirect_to organisation_path(@organisation), notice: 'Organisation updated successfully.'
+        end
+      else
+        redirect_to organisation_path(@organisation), notice: 'Organisation updated successfully.'
+      end
     else
       flash.now[:alert] = @organisation.errors.full_messages.to_sentence
       render :edit, status: :unprocessable_entity
