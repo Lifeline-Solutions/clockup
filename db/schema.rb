@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_25_100000) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_27_192000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -32,6 +32,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_25_100000) do
   end
 
   create_table "organisations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
     t.integer "allowed_radius_meters", default: 100
     t.string "clock_qr_token"
     t.datetime "created_at", null: false

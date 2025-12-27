@@ -169,9 +169,8 @@ class OrganisationController < ApplicationController
   end
 
   def update
-    # Only allow updating working hours for now
     if @organisation.update(organisation_params)
-      redirect_to organisation_path(@organisation), notice: 'Organisation working hours updated successfully.'
+      redirect_to organisation_path(@organisation), notice: 'Organisation updated successfully.'
     else
       flash.now[:alert] = @organisation.errors.full_messages.to_sentence
       render :edit, status: :unprocessable_entity
@@ -192,7 +191,7 @@ class OrganisationController < ApplicationController
   end
 
   def organisation_params
-    params.require(:organisation).permit(:work_start_time, :work_end_time)
+    params.require(:organisation).permit(:work_start_time, :work_end_time, :active)
   end
 
   def organisation_create_params
@@ -204,7 +203,8 @@ class OrganisationController < ApplicationController
       :allowed_radius_meters,
       :timezone,
       :work_start_time,
-      :work_end_time
+      :work_end_time,
+      :active
     )
   end
 end
