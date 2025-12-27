@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   # Monolith routes
   root to: "home#index"
   # Align routes with British spelling and existing controller
-  resources :organisations, controller: "organisation"
+  resources :organisations, controller: "organisation" do
+    # Nested user creation to avoid Devise route conflicts
+    resources :users, only: [:new, :create]
+  end
+  # Keep top-level users for show only
   resources :users, only: [:show]
   resources :roles
   resources :clock_events, only: [:create]

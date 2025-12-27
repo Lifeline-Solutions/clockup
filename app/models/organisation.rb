@@ -25,6 +25,10 @@ class Organisation < ApplicationRecord
     ActiveSupport::TimeZone[timezone] || Time.zone
   end
 
+  # Scopes
+  scope :active, -> { where(active: true) }
+  scope :inactive, -> { where(active: false) }
+
   # Returns a DateTime object for the organisation's start time on a given date
   def work_start_time_for(date)
     tz = time_zone

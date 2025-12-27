@@ -1,0 +1,17 @@
+Welcome to Clockup
+
+Hello <%= @user.name %>,
+
+An account has been created for you at <%= @organisation.name %>.
+Your account email: <%= @user.email %>
+
+<% if @temp_password.present? %>
+Temporary password: <%= @temp_password %>
+You'll be asked to change it after you sign in.
+<% else %>
+Use the password provided by your administrator to sign in.
+<% end %>
+
+Sign in: <%= new_user_session_url %>
+
+If you didn't expect this email, you can ignore it.

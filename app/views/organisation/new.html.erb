@@ -1,0 +1,81 @@
+<div class="max-w-2xl mx-auto bg-white shadow-sm rounded-lg p-6">
+  <h1 class="text-xl font-semibold text-gray-800">New Organisation</h1>
+  <p class="mt-1 text-sm text-gray-600">Create a new organisation with location and working hours.</p>
+
+  <%= form_with(model: @organisation, url: organisations_path, method: :post, local: true) do |f| %>
+    <div class="mt-6 space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="organisation_name">Name</label>
+        <%= f.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="organisation_email">Email (optional)</label>
+        <%= f.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="organisation_latitude">Latitude</label>
+          <%= f.number_field :latitude, step: 0.000001, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="organisation_longitude">Longitude</label>
+          <%= f.number_field :longitude, step: 0.000001, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700" for="organisation_allowed_radius_meters">Allowed Radius (meters)</label>
+        <%= f.number_field :allowed_radius_meters, min: 1, step: 1, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" %>
+      </div>
+
+      <div data-controller="timezone-search" class="relative">
+        <label class="block text-sm font-medium text-gray-700" for="organisation_timezone">Timezone</label>
+        <%= f.hidden_field :timezone, data: { timezone_search_target: "hidden" } %>
+        <div class="flex items-center gap-2">
+          <input type="text"
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+               placeholder="Type to search… (e.g., Africa/Johannesburg)"
+               data-timezone-search-target="input"
+               data-action="input->timezone-search#filter focus->timezone-search#open blur->timezone-search#commit">
+          <button type="button"
+                  class="mt-1 inline-flex items-center px-3 py-2 text-sm rounded bg-gray-200 text-gray-800 hover:bg-gray-300"
+                  data-action="timezone-search#useCurrent">Use my current timezone</button>
+        </div>
+
+        <ul class="absolute z-10 mt-1 max-h-64 w-full overflow-auto rounded-md border border-gray-200 bg-white shadow-sm hidden"
+            data-timezone-search-target="list"
+            role="listbox">
+          <% ActiveSupport::TimeZone.all.each do |zone| %>
+            <% tz_name = zone.tzinfo.name %>
+            <li class="px-3 py-2 text-sm hover:bg-gray-100 cursor-pointer"
+                role="option"
+                data-timezone-search-target="item"
+                data-value="<%= tz_name %>"
+                data-action="click->timezone-search#select"><%= tz_name %></li>
+          <% end %>
+        </ul>
+        <p class="mt-1 text-xs text-gray-500">Start typing to filter. Click to select.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="organisation_work_start_time">Start Time</label>
+          <%= f.time_field :work_start_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", step: 60 %>
+          <p class="mt-1 text-xs text-gray-500">Use 24-hour format (HH:MM).</p>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700" for="organisation_work_end_time">End Time</label>
+          <%= f.time_field :work_end_time, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500", step: 60 %>
+          <p class="mt-1 text-xs text-gray-500">Use 24-hour format (HH:MM).</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 mt-6">
+        <%= f.submit "Create", class: "inline-flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded hover:bg-indigo-700" %>
+        <%= link_to "Cancel", organisations_path, class: "text-sm text-gray-600 hover:text-gray-800" %>
+      </div>
+    </div>
+  <% end %>
+</div>
