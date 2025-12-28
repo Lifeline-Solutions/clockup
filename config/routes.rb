@@ -19,6 +19,7 @@ Rails.application.routes.draw do
       post "login", to: "sessions#login"
       post "logout", to: "sessions#logout"
       post "clock", to: "clock_events#create"
+      post "ussd", to: "ussd#handle"
     end
   end
 end
