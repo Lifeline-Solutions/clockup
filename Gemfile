@@ -70,3 +70,6 @@ end
 gem 'devise'
 gem 'rack-cors'
 gem 'rolify'
+
+# USSD Provider
+gem 'africas_talking', '~> 0.0.2'
