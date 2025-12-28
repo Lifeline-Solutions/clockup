@@ -75,3 +75,5 @@ Style/HashTransformValues:
   Enabled: false
 Style/SafeNavigationChainLength:
   Enabled: false
+Style/ComparableClamp:
+  Enabled: false
