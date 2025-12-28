@@ -77,6 +77,9 @@ GEM
       uri (>= 0.13.1)
     addressable (2.8.8)
       public_suffix (>= 2.0.2, < 8.0)
+    africas_talking (0.0.2)
+      json
+      typhoeus
     ast (2.4.3)
     base64 (0.3.0)
     bcrypt (3.1.20)
@@ -120,6 +123,8 @@ GEM
     erubi (1.13.1)
     et-orbi (1.4.0)
       tzinfo
+    ethon (0.15.0)
+      ffi (>= 1.15.0)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -377,6 +382,8 @@ GEM
     turbo-rails (2.0.20)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
+    typhoeus (1.5.0)
+      ethon (>= 0.9.0, < 0.16.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.2.0)
@@ -412,6 +419,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
+  africas_talking (~> 0.0.2)
   bootsnap
   brakeman
   bundler-audit
