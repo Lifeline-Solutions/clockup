@@ -1,7 +1,7 @@
 class UssdService
   MENU = {
     initial: "Welcome to ClockUp\n1. Clock In\n2. Clock Out\n3. View Status\n4. Exit",
-    invalid: "Invalid option. Please try again."
+    invalid: 'Invalid option. Please try again.'
   }.freeze
 
   def initialize(phone_number, text, session_id)
@@ -12,21 +12,21 @@ class UssdService
   end
 
   def process
-    return end_response("User not found. Please register first.") unless @user
+    return end_response('User not found. Please register first.') unless @user
 
     case @text
-    when ""
+    when ''
       continue_response(MENU[:initial])
-    when "1"
+    when '1'
       handle_clock_in
-    when "2"
+    when '2'
       handle_clock_out
-    when "3"
+    when '3'
       handle_view_status
-    when "4"
-      end_response("Thank you for using ClockUp. Goodbye!")
+    when '4'
+      end_response('Thank you for using ClockUp. Goodbye!')
     else
-      continue_response(MENU[:invalid] + "\n\n" + MENU[:initial])
+      continue_response("#{MENU[:invalid]}\n\n#{MENU[:initial]}")
     end
   end
 
@@ -34,35 +34,35 @@ class UssdService
 
   def handle_clock_in
     if @user.clocked_in?
-      end_response("You are already clocked in.")
+      end_response('You are already clocked in.')
+    elsif create_clock_in
+      end_response("✓ Clock In successful at #{Time.current.strftime('%H:%M')}")
     else
-      if create_clock_in
-        end_response("✓ Clock In successful at #{Time.current.strftime('%H:%M')}")
-      else
-        end_response("✗ Clock In failed. Please try again.")
-      end
+      end_response('✗ Clock In failed. Please try again.')
     end
   end
 
   def handle_clock_out
     if !@user.clocked_in?
-      end_response("You are not clocked in.")
+      end_response('You are not clocked in.')
+    elsif update_clock_out
+      end_response("✓ Clock Out successful at #{Time.current.strftime('%H:%M')}")
     else
-      if update_clock_out
-        end_response("✓ Clock Out successful at #{Time.current.strftime('%H:%M')}")
-      else
-        end_response("✗ Clock Out failed. Please try again.")
-      end
+      end_response('✗ Clock Out failed. Please try again.')
     end
   end
 
   def handle_view_status
     if @user.clocked_in?
       latest = @user.latest_clock_event_for
-      clock_in_time = latest.occurred_at.strftime('%H:%M') rescue 'N/A'
+      clock_in_time = begin
+        latest.occurred_at.strftime('%H:%M')
+      rescue StandardError
+        'N/A'
+      end
       status = "Status: Clocked In\nTime: #{clock_in_time}"
     else
-      status = "Status: Clocked Out"
+      status = 'Status: Clocked Out'
     end
 
     end_response(status)

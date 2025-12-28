@@ -9,7 +9,7 @@ class User < ApplicationRecord
   belongs_to :organisation
   has_many :clock_events, dependent: :destroy
 
-  validates :phone_number, uniqueness: true, allow_blank: true, format: { with: /\A\+?[1-9]\d{1,14}\z/, message: "must be a valid phone number" }
+  validates :phone_number, uniqueness: true, allow_blank: true, format: { with: /\A\+?[1-9]\d{1,14}\z/, message: 'must be a valid phone number' }
 
   # Ensure API token is generated before create
   before_create :generate_api_token

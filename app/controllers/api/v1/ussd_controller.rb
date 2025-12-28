@@ -5,12 +5,10 @@ module Api
 
       def handle
         phone_number = params[:phoneNumber]
-        text = params[:text] || ""
+        text = params[:text] || ''
         session_id = params[:sessionId]
 
-        unless phone_number.present?
-          return render plain: "END Invalid request"
-        end
+        return render plain: 'END Invalid request' unless phone_number.present?
 
         response = UssdService.new(phone_number, text, session_id).process
         render plain: response
