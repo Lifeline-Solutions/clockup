@@ -68,7 +68,7 @@ class UssdService
     end_response(status)
   end
 
-  def create_clock_in
+  def create_clock_in?
     ClockEvent.create(
       user: @user,
       organisation: @user.organisation,
@@ -77,7 +77,7 @@ class UssdService
     ).persisted?
   end
 
-  def update_clock_out
+  def update_clock_out?
     latest = @user.latest_clock_event_for
     return false unless latest&.clock_in?
 
